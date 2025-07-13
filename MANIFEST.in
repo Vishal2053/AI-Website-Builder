@@ -1,0 +1,4 @@
+include requirements.txt
+include .env
+recursive-include templates *
+recursive-include static *
