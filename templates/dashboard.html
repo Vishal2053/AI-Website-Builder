@@ -1,1 +1,84 @@
-<h2>Dashboard</h2>
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<div class="dashboard-container" style="max-width: 1600px; padding: 48px;">
+  <div class="chat-panel" style="min-height: 600px; flex: 1 1 48%;">
+    <h4>Chat with AI</h4>
+    <div class="chat-history" id="chat-history" style="height: 350px;">
+      {% for msg in chat_history %}
+        <div><strong>{{ msg.role|capitalize }}:</strong> {{ msg.content }}</div>
+      {% endfor %}
+    </div>
+    <form method="POST">
+      <input type="hidden" name="chat" value="1">
+      <div class="mb-2">
+        <textarea name="description" class="form-control" rows="3" placeholder="Describe your website or ask a question..." required></textarea>
+      </div>
+      <div class="mb-2">
+        <select name="language" class="form-select">
+          <option value="HTML/CSS/JS">HTML/CSS/JS</option>
+          <option value="Python Flask">Python Flask</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Send</button>
+    </form>
+  </div>
+  <div class="preview-panel" style="min-height: 600px; flex: 1 1 52%;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="radio-group">
+        <label class="me-3"><input type="radio" name="view" id="previewRadio" checked> Preview</label>
+        <label><input type="radio" name="view" id="codeRadio"> Code</label>
+      </div>
+      <button class="btn btn-success" onclick="openFullPreview()">Full Web Preview</button>
+    </div>
+    <div id="previewSection">
+      <h5>Live Preview</h5>
+      <iframe id="previewFrame" class="w-100" height="500px" style="border-radius:8px;"></iframe>
+    </div>
+    <div id="codeSection" style="display:none;">
+      <h5>Generated Code</h5>
+      <textarea id="codeArea" class="form-control" rows="22">{{ code }}</textarea>
+      <button class="btn btn-success mt-2" onclick="downloadCode()">Download Code</button>
+    </div>
+  </div>
+</div>
+<script>
+  document.getElementById('previewRadio').onclick = function() {
+    document.getElementById('previewSection').style.display = '';
+    document.getElementById('codeSection').style.display = 'none';
+    updatePreview();
+  };
+  document.getElementById('codeRadio').onclick = function() {
+    document.getElementById('previewSection').style.display = 'none';
+    document.getElementById('codeSection').style.display = '';
+  };
+  function updatePreview() {
+    const html = {{ preview_html|tojson }};
+    const iframe = document.getElementById('previewFrame');
+    iframe.contentWindow.document.open();
+    iframe.contentWindow.document.write(html);
+    iframe.contentWindow.document.close();
+  }
+  document.getElementById('codeArea').addEventListener('input', updatePreview);
+  window.onload = updatePreview;
+  function downloadCode() {
+    const code = document.getElementById('codeArea').value;
+    const blob = new Blob([code], {type: "text/plain"});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = "website_code.html";
+    link.click();
+  }
+  function openFullPreview() {
+  fetch('/static/generated_files/generated.html')
+    .then(response => {
+      if (response.ok) {
+        window.open('/static/generated_files/generated.html', '_blank');
+      } else {
+        alert('No preview available yet. Please generate a website first.');
+      }
+    });
+}
+</script>
+{% endblock %}

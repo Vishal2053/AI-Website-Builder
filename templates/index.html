@@ -1,1 +1,11 @@
-<h1>Welcome to AI Website Builder</h1>
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="text-center mt-5">
+  <h1 class="display-5">Welcome to AI Website Builder</h1>
+  <p class="lead">Create your website with natural language and AI magic.</p>
+  <a href="/login" class="btn btn-primary mt-3 me-2">Login</a>
+  <a href="/register" class="btn btn-outline-secondary mt-3">Register</a>
+</div>
+{% endblock %}
+

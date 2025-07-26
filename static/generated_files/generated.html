@@ -1,0 +1,200 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QC Analysis Form</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f9f9f9; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 20px; }
+        h1 { margin-bottom: 20px; color: #333; }
+        .button-container { margin-bottom: 20px; }
+        .button-container button { margin-right: 10px; padding: 10px 15px; font-size: 16px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .button-container button:hover { background-color: #0056b3; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; box-shadow: 0 2px 3px rgba(0,0,0,0.1); }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #007bff; color: white; }
+        .hidden { display: none; }
+        .done { color: green; }
+        .link-icon:before { content: "\u21C9"; cursor: pointer; margin-left: 5px; }
+        .pagination { margin-top: 20px; }
+        .pagination button { margin: 0 5px; padding: 5px 10px; background-color: #ddd; border: none; border-radius: 3px; cursor: pointer; }
+        .pagination button:hover { background-color: #ccc; }
+        .pagination button.active { background-color: #007bff; color: white; }
+    </style>
+</head>
+<body>
+    <h1>QC Analysis Form</h1>
+    <div class="button-container">
+        <button onclick="showTable('qc1')">QC1</button>
+        <button onclick="showTable('qc2')">QC2</button>
+    </div>
+    
+    <table id="qc1Table" class="hidden">
+        <thead>
+            <tr>
+                <th>QC1 Status</th>
+                <th>Name</th>
+                <th>Village</th>
+                <th>Taluka</th>
+                <th>Age</th>
+                <th>Mobile</th>
+                <th>Education</th>
+                <th>Artisan Type</th>
+                <th>Buttons</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><span class="qc1Status"></span></td>
+                <td>John Doe</td>
+                <td>Village A</td>
+                <td>Taluka A</td>
+                <td>30</td>
+                <td>1234567890</td>
+                <td>Graduate</td>
+                <td>Woodworker</td>
+                <td class="link-icon" onclick="markDone(this, 'qc1')"></td>
+            </tr>
+            <tr>
+                <td><span class="qc1Status"></span></td>
+                <td>Jane Smith</td>
+                <td>Village B</td>
+                <td>Taluka B</td>
+                <td>35</td>
+                <td>0987654321</td>
+                <td>Post Graduate</td>
+                <td>Carpenter</td>
+                <td class="link-icon" onclick="markDone(this, 'qc1')"></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <table id="qc2Table" class="hidden">
+        <thead>
+            <tr>
+                <th>QC2 Status</th>
+                <th>Name</th>
+                <th>Village</th>
+                <th>Taluka</th>
+                <th>Age</th>
+                <th>Mobile</th>
+                <th>Education</th>
+                <th>Artisan Type</th>
+                <th>Buttons</th>
+            </tr>
+        </thead>
+        <tbody id="qc2TBody">
+        </tbody>
+    </table>
+    
+    <div class="pagination">
+        <button onclick="changePage('prev')">Previous</button>
+        <button onclick="changePage('next')">Next</button>
+        <span>Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
+    </div>
+    
+    <script>
+        const doneIcon = "\u2713";
+        const itemsPerPage = 2;
+        let currentPage = 1;
+        let totalPages = 1;
+
+        const data = [
+            { qc1Status: '', name: 'John Doe', village: 'Village A', taluka: 'Taluka A', age: 30, mobile: '1234567890', education: 'Graduate', artisanType: 'Woodworker' },
+            { qc1Status: '', name: 'Jane Smith', village: 'Village B', taluka: 'Taluka B', age: 35, mobile: '0987654321', education: 'Post Graduate', artisanType: 'Carpenter' }
+        ];
+
+        function showTable(button) {
+            document.getElementById('qc1Table').classList.add('hidden');
+            document.getElementById('qc2Table').classList.add('hidden');
+            document.getElementById(button + 'Table').classList.remove('hidden');
+            if (button === 'qc2') refreshQC2Table();
+            currentPage = 1;
+            renderTable();
+        }
+
+        function markDone(element, QCType) {
+            let row = element.parentNode.parentNode;
+            let cells = row.getElementsByTagName('td');
+            if (QCType === 'qc1') {
+                cells[0].innerHTML = `<span class="qc1Status done">${doneIcon}</span>`;
+                cells[8].classList.add('hidden');
+                refreshQC2Table();
+            } else if (QCType === 'qc2') {
+                cells[0].innerHTML = `<span class="qc2Status done">${doneIcon}</span>`;
+                cells[8].classList.add('hidden');
+            }
+            renderTable();
+        }
+
+        function refreshQC2Table() {
+            data.forEach(item => {
+                if (item.qc1Status === doneIcon && !item.qc2Status) {
+                    item.qc2Status = '';
+                }
+            });
+            currentPage = 1;
+            renderTable();
+        }
+
+        function renderTable() {
+            const tableId = document.getElementById('qc1Table').classList.contains('hidden') ? 'qc2TBody' : 'qc1Table tbody';
+            const tableBody = document.getElementById(tableId);
+            tableBody.innerHTML = '';
+
+            const dataToDisplay = data.filter(item => {
+                if (tableId === 'qc2TBody') return item.qc1Status === doneIcon;
+                return true;
+            });
+
+            totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
+            document.getElementById('totalPages').innerText = totalPages;
+
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paginatedData = dataToDisplay.slice(start, end);
+
+            paginatedData.forEach(item => {
+                let row = tableBody.insertRow();
+                let cell1 = row.insertCell(0);
+                let cell2 = row.insertCell(1);
+                let cell3 = row.insertCell(2);
+                let cell4 = row.insertCell(3);
+                let cell5 = row.insertCell(4);
+                let cell6 = row.insertCell(5);
+                let cell7 = row.insertCell(6);
+                let cell8 = row.insertCell(7);
+                let cell9 = row.insertCell(8);
+                if (tableId === 'qc2TBody') {
+                    cell1.innerHTML = `<span class="qc2Status ${item.qc2Status === doneIcon ? 'done' : ''}">${item.qc2Status}</span>`;
+                } else {
+                    cell1.innerHTML = `<span class="qc1Status ${item.qc1Status === doneIcon ? 'done' : ''}">${item.qc1Status}</span>`;
+                }
+                cell2.innerHTML = item.name;
+                cell3.innerHTML = item.village;
+                cell4.innerHTML = item.taluka;
+                cell5.innerHTML = item.age;
+                cell6.innerHTML = item.mobile;
+                cell7.innerHTML = item.education;
+                cell8.innerHTML = item.artisanType;
+                cell9.innerHTML = `<td class="link-icon" onclick="markDone(this, '${tableId === 'qc2TBody' ? 'qc2' : 'qc1'}')"></td>`;
+            });
+
+            document.getElementById('currentPage').innerText = currentPage;
+            document.querySelector('.pagination button:first-child').style.visibility = currentPage === 1 ? 'hidden' : 'visible';
+            document.querySelector('.pagination button:last-child').style.visibility = currentPage === totalPages ? 'hidden' : 'visible';
+        }
+
+        function changePage(direction) {
+            if (direction === 'prev' && currentPage > 1) currentPage--;
+            if (direction === 'next' && currentPage < totalPages) currentPage++;
+            renderTable();
+        }
+
+        document.getElementById('qc1Table').classList.remove('hidden');
+        renderTable();
+    </script>
+</body>
+</html>
+```

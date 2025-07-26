@@ -1,0 +1,80 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QC Analysis Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+<link rel="stylesheet" href="generated.css">
+<script src="generated.js"></script>
+</head>
+<body>
+    <h1 id="mainTitle">QC Analysis Form</h1>
+    <div class="button-group">
+        <button id="qc1Btn">QC1</button>
+        <button id="qc2Btn">QC2</button>
+    </div>
+    <table id="qc1Table" class="hidden">
+        <thead>
+            <tr>
+                <th>QC1 Status</th>
+                <th>Name</th>
+                <th>Village</th>
+                <th>Taluka</th>
+                <th>Age</th>
+                <th>Mobile</th>
+                <th>Education</th>
+                <th>Artisan Type</th>
+                <th>Buttons</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><span class="qc1Status"></span></td>
+                <td>John Doe</td>
+                <td>Village 1</td>
+                <td>Taluka 1</td>
+                <td>30</td>
+                <td>1234567890</td>
+                <td>High School</td>
+                <td>Painter</td>
+                <td><a href="#" class="markQc1"><i class="fas fa-link"></i></a></td>
+            </tr>
+            <tr>
+                <td><span class="qc1Status"></span></td>
+                <td>Jane Smith</td>
+                <td>Village 2</td>
+                <td>Taluka 2</td>
+                <td>35</td>
+                <td>0987654321</td>
+                <td>College</td>
+                <td>Carpenter</td>
+                <td><a href="#" class="markQc1"><i class="fas fa-link"></i></a></td>
+            </tr>
+        </tbody>
+    </table>
+    <table id="qc2Table" class="hidden">
+        <thead>
+            <tr>
+                <th>QC2 Status</th>
+                <th>Name</th>
+                <th>Village</th>
+                <th>Taluka</th>
+                <th>Age</th>
+                <th>Mobile</th>
+                <th>Education</th>
+                <th>Artisan Type</th>
+                <th>Buttons</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- QC2 entries will be dynamically added here -->
+        </tbody>
+    </table>
+
+    
+</body>
+</html>
+```
